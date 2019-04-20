@@ -6,8 +6,8 @@ import time
 def login():
 
 	data = {
-		'_username': '',
-		'_password': '',
+		'_username': username,
+		'_password': password,
 		'_remember_me': 'on',
 		'login': 'ログイン'
 	}
@@ -47,11 +47,6 @@ def get_img(url):
 
 	html = r.text
 
-	category = re.findall('view:\'(.+?)\'', html)[0]
-	if category == 'audio':
-		get_mp3(url)
-		sys.exit(0)
-
 	try:
 		contentId = re.findall('contentId: \'(.+?)\'', html)[0]
 		createDate = re.findall('createDate]" required="required" value="(.+?)"', html)[0]
@@ -89,10 +84,30 @@ def get_img(url):
 
 	print(f'下载完成:{filename}')
 
+def main(url):
+
+	r = requests.get(url)
+
+	category = re.findall('view:\'(.+?)\'', r.text)[0]
+
+	if category == 'audio':
+		get_mp3(url)
+		sys.exit(0)
+	elif category == 'image':
+		if username and password:
+			get_img(url)
+		else:
+			print('下载图片需要登录,请填写帐号密码再进行操作。')
+			sys.exit(0)
+		
+
+
 if __name__ == '__main__':
 	s = requests.session()
+	username = '' # 帐号
+	password = '' # 密码
 	url = sys.argv[1]
 	start = time.time()
-	get_img(url)
+	main(url)
 	end = time.time()
 	print('用时:{}秒'.format(int(end - start)))
