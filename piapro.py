@@ -87,7 +87,7 @@ def get_img(url):
 		f2.write(r1.content)
 		f2.close()
 
-	print('下载完成')
+	print(f'下载完成:{filename}')
 
 if __name__ == '__main__':
 	s = requests.session()
